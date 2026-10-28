@@ -346,6 +346,7 @@ impl Game {
         u.done = false;
         if matches!(u.orders, Orders::Sentry | Orders::Fortified | Orders::Fortify | Orders::Goto { .. }) {
             u.orders = Orders::None;
+            u.plan.clear();
         }
         Ok(())
     }

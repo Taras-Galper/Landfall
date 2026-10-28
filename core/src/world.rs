@@ -266,8 +266,17 @@ impl Game {
     // ----- go to ------------------------------------------------------------------
 
     /// Can this unit pass through (x, y) on the way to (tx, ty)?
+    /// Has the human never seen this square? Routes for the human's units
+    /// treat such squares as open, since nothing is known about them.
+    fn unknown_to(&self, u: &Unit, x: i32, y: i32) -> bool {
+        u.nation == self.human && self.tile(x, y).is_some_and(|t| !t.visible_to(u.nation))
+    }
+
     fn passable(&self, u: &Unit, x: i32, y: i32, tx: i32, ty: i32) -> bool {
         let Some(t) = self.tile(x, y) else { return false };
+        if self.unknown_to(u, x, y) {
+            return true;
+        }
         let dest = (x, y) == (tx, ty);
         let water = t.terrain().is_water();
         let own_colony = self.colony_at(x, y).is_some_and(|c| c.nation == u.nation);
@@ -318,9 +327,15 @@ impl Game {
                 if !self.passable(u, nx, ny, tx, ty) {
                     continue;
                 }
-                let cost = if u.kind.is_ship() { 3 } else { self.move_cost(x, y, nx, ny) as u32 };
+                let cost = if u.kind.is_ship() || self.unknown_to(u, nx, ny) { 3 } else { self.move_cost(x, y, nx, ny) as u32 };
                 let ni = (ny * w + nx) as usize;
-                let nd = d + cost.max(1);
+                // among equally short routes, prefer the one closest to the straight line
+                let off = {
+                    let (lx, ly) = ((tx - sx) as f32, (ty - sy) as f32);
+                    let len = (lx * lx + ly * ly).sqrt().max(1.0);
+                    (((nx - sx) as f32 * ly - (ny - sy) as f32 * lx).abs() / len * 4.0).min(30.0) as u32
+                };
+                let nd = d + cost.max(1) * 100 + off;
                 if nd < dist[ni] {
                     dist[ni] = nd;
                     prev[ni] = i;
@@ -342,50 +357,86 @@ impl Game {
     }
 
     /// Give a go-to order and start walking. Returns a prompt/blocker if the
-    /// journey is interrupted this turn.
+    /// journey is interrupted this turn. Squares nobody has explored count as
+    /// open; if the way turns out to be blocked the unit stops and waits.
     pub fn goto(&mut self, id: Id, tx: i32, ty: i32) -> Option<MoveResult> {
-        if self.find_path(id, tx, ty).is_none() {
+        let Some(path) = self.find_path(id, tx, ty) else {
             return Some(MoveResult::Blocked("There is no way to get there.".into()));
-        }
+        };
         self.set_orders(id, Orders::Goto { x: tx as i16, y: ty as i16 });
+        if let Some(u) = self.unit_mut(id) {
+            u.plan = path.iter().map(|&(x, y)| (x as i16, y as i16)).collect();
+        }
         self.continue_goto(id)
+    }
+
+    fn stop_goto(&mut self, id: Id) {
+        self.set_orders(id, Orders::None);
+        if let Some(u) = self.unit_mut(id) {
+            u.plan.clear();
+        }
     }
 
     /// Advance a unit with a go-to order as far as its movement allows.
     pub fn continue_goto(&mut self, id: Id) -> Option<MoveResult> {
         for _ in 0..64 {
-            let u = self.unit(id)?;
+            let u = self.unit(id)?.clone();
             let Orders::Goto { x: tx, y: ty } = u.orders else { return None };
             let (tx, ty) = (tx as i32, ty as i32);
             if u.moves == 0 {
                 return None;
             }
             let pos = self.unit_pos(id)?;
-            if !matches!(u.loc, Loc::Map { .. }) {
-                self.set_orders(id, Orders::None);
+            if !matches!(u.loc, Loc::Map { .. }) || pos == (tx, ty) {
+                self.stop_goto(id);
                 return None;
             }
-            if pos == (tx, ty) {
-                self.set_orders(id, Orders::None);
-                return None;
-            }
-            let Some(path) = self.find_path(id, tx, ty) else {
-                self.set_orders(id, Orders::None);
-                return Some(MoveResult::Blocked("The way is blocked.".into()));
+            let human = u.nation == self.human;
+            // the human's units keep to the route they were given; others plan afresh each step
+            let next = match u.plan.first() {
+                Some(&(x, y)) if human && (x as i32 - pos.0).abs() <= 1 && (y as i32 - pos.1).abs() <= 1 => (x as i32, y as i32),
+                _ => {
+                    let Some(path) = self.find_path(id, tx, ty) else {
+                        self.stop_goto(id);
+                        return Some(MoveResult::Blocked("The way is blocked.".into()));
+                    };
+                    if human {
+                        self.unit_mut(id).unwrap().plan = path.iter().map(|&(x, y)| (x as i16, y as i16)).collect();
+                    }
+                    path[0]
+                }
             };
-            let (nx, ny) = path[0];
-            match self.try_move(id, nx - pos.0, ny - pos.1) {
+            // a square on the route has turned out to be impassable: stop and wait for orders
+            let dest = (tx, ty);
+            if human && !self.passable(&u, next.0, next.1, dest.0, dest.1) {
+                let what = if u.kind.is_ship() { "Land ahead" } else { "The way ahead is blocked" };
+                let name = self.unit_name(&u);
+                self.stop_goto(id);
+                return Some(MoveResult::Blocked(format!("{what}. The {name} stops and waits for orders.")));
+            }
+            match self.try_move(id, next.0 - pos.0, next.1 - pos.1) {
                 MoveResult::Moved => {
-                    if self.unit_pos(id) == Some(pos) {
+                    let now = self.unit_pos(id);
+                    if now == Some(pos) {
                         return None; // ran out of movement trying
                     }
-                    if self.unit_pos(id) == Some((tx, ty)) {
-                        self.set_orders(id, Orders::None);
+                    if let Some(u) = self.unit_mut(id)
+                        && u.plan.first().is_some_and(|&(x, y)| Some((x as i32, y as i32)) == now)
+                    {
+                        u.plan.remove(0);
+                    }
+                    if now == Some(dest) {
+                        self.stop_goto(id);
                         return None;
                     }
                 }
+                MoveResult::Blocked(why) if human => {
+                    self.stop_goto(id);
+                    let name = self.unit(id).map(|u| self.unit_name(u)).unwrap_or_default();
+                    return Some(MoveResult::Blocked(format!("{why} The {name} stops and waits for orders.")));
+                }
                 other => {
-                    self.set_orders(id, Orders::None);
+                    self.stop_goto(id);
                     return Some(other);
                 }
             }
@@ -398,6 +449,7 @@ impl Game {
     pub fn set_orders(&mut self, id: Id, o: Orders) {
         if let Some(u) = self.unit_mut(id) {
             u.orders = o;
+            u.plan.clear();
         }
     }
 

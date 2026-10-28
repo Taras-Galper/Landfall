@@ -98,7 +98,7 @@ const App = {
     const sel = this.selected();
     const t = MapView.tileAt(x, y);
     // a selected unit elsewhere goes where you click: into your colony, or onto an empty square
-    if (sel && sel.loc.type === 'map' && (sel.x !== x || sel.y !== y) && t && t.explored && (ownCol || !mine.length)) {
+    if (sel && sel.loc.type === 'map' && (sel.x !== x || sel.y !== y) && t && (ownCol || !mine.length)) {
       this.orderTo(x, y);
       return;
     }

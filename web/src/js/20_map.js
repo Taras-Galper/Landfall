@@ -385,8 +385,7 @@ const MapView = (() => {
     const key = `${sel.id}:${sel.x},${sel.y}>${hover.x},${hover.y}`;
     if (key === pathKey && path) return;
     pathKey = key;
-    const t = tileAt(hover.x, hover.y);
-    if (!t || !t.explored) return;
+    if (!tileAt(hover.x, hover.y)) return;
     const r = Engine.call({ cmd: 'path', unit: sel.id, x: hover.x, y: hover.y });
     path = r.data && r.data.path;
   }

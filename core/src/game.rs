@@ -135,6 +135,10 @@ pub struct Unit {
     /// Turns until a damaged ship is repaired.
     #[serde(default)]
     pub repair: u8,
+    /// Squares still to cross on a go-to journey (the human's units follow
+    /// the route they were given and stop if it turns out to be blocked).
+    #[serde(default)]
+    pub plan: Vec<(i16, i16)>,
 }
 
 /// Building kinds, each with up to 3 levels. Row in the rules' `buildings` for
@@ -710,6 +714,7 @@ impl Game {
             teach: 0,
             route: None,
             repair: 0,
+            plan: Vec::new(),
         });
         id
     }

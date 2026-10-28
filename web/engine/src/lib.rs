@@ -192,8 +192,10 @@ fn run_gotos(g: &mut Game) -> Option<Value> {
         .map(|u| u.id)
         .collect();
     for id in ids {
-        if let Some(MoveResult::Ask(p)) = g.continue_goto(id) {
-            return Some(prompt_json(g, p));
+        match g.continue_goto(id) {
+            Some(MoveResult::Ask(p)) => return Some(prompt_json(g, p)),
+            Some(MoveResult::Blocked(why)) => g.msg(why),
+            _ => {}
         }
     }
     None
@@ -228,9 +230,6 @@ fn command(g: &mut Game, name: &str, cmd: &Value) -> Reply {
                 return Reply::err("That unit isn't yours.");
             }
             let r = g.goto(u, int(cmd, "x"), int(cmd, "y"));
-            if r.is_none() {
-                return Reply { error: Some("No way to get there.".into()), changed: true, ..Default::default() };
-            }
             move_reply(g, r)
         }
         "path" => {
@@ -246,7 +245,8 @@ fn command(g: &mut Game, name: &str, cmd: &Value) -> Reply {
                 .iter()
                 .filter(|&&p| p != start)
                 .map(|&(x, y)| {
-                    let cost = if unit.kind.is_ship() { 3 } else { g.move_cost(fx, fy, x, y) as i32 };
+                    let unknown = g.tile(x, y).is_some_and(|t| !t.visible_to(h));
+                    let cost = if unit.kind.is_ship() || unknown { 3 } else { g.move_cost(fx, fy, x, y) as i32 };
                     if left <= 0 {
                         turn += 1;
                         left = full;
