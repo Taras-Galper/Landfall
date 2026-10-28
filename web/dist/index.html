@@ -2323,6 +2323,8 @@ async function boot() {
   App.meta = Engine.call({ cmd: 'meta' }).data;
   MapView.init();
   window.addEventListener('keydown', onKey);
+  // right-click is a game control everywhere, so the browser's menu never opens (text fields keep it)
+  document.addEventListener('contextmenu', e => { if (!e.target.closest('input, textarea, select')) e.preventDefault(); });
   Start.show();
 }
 boot();
