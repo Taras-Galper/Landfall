@@ -1,0 +1,12 @@
+[package]
+name = "landfall_core"
+version = "0.1.0"
+edition = "2024"
+description = "Rules engine of Landfall, a colonial strategy game."
+
+[lib]
+name = "landfall"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"

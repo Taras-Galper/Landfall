@@ -1,0 +1,12 @@
+[package]
+name = "landfall_web"
+version = "0.1.0"
+edition = "2024"
+description = "Landfall's rules engine for the browser: a JSON command interface compiled to WebAssembly."
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+landfall_core = { path = "../../core" }
+serde_json = "1"

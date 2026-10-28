@@ -1,0 +1,16 @@
+[workspace]
+members = ["core", "web/engine"]
+resolver = "3"
+
+[profile.release]
+opt-level = 3
+
+# Small, fast build of the browser engine:
+#   cargo build --profile web -p landfall_web --target wasm32-unknown-unknown
+[profile.web]
+inherits = "release"
+opt-level = "s"
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"

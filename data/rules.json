@@ -1,0 +1,1637 @@
+{
+ "names": {
+  "nations": [
+   "Brennland",
+   "Corvaine",
+   "Castamar",
+   "Veldhaven",
+   "Ankaru",
+   "Itzari",
+   "Marawe",
+   "Onaweh",
+   "Kessani",
+   "Durrak",
+   "Shanoka",
+   "Ilvae",
+   "Crown Army"
+  ],
+  "adjectives": [
+   "Brennish",
+   "Corvainian",
+   "Castamaran",
+   "Veldish"
+  ],
+  "independent": [
+   "United Provinces of Newbrenn",
+   "Republic of Sorelle",
+   "Federation of Nueva Castamar",
+   "Free Republic of Westhaven"
+  ],
+  "units": [
+   "Colonist",
+   "Soldier",
+   "Pioneer",
+   "Missionary",
+   "Dragoon",
+   "Scout",
+   "Crown Regular",
+   "Patriot Cavalry",
+   "Crown Cavalry",
+   "Patriot Army",
+   "Treasure",
+   "Artillery",
+   "Wagon Train",
+   "Caravel",
+   "Merchantman",
+   "Galleon",
+   "Privateer",
+   "Frigate",
+   "Ship of the Line",
+   "Brave",
+   "Armed Brave",
+   "Mounted Brave",
+   "Mounted Warrior"
+  ],
+  "professions": [
+   "Expert Farmer",
+   "Master Sugar Planter",
+   "Master Tobacco Planter",
+   "Master Cotton Planter",
+   "Expert Fur Trapper",
+   "Expert Lumberjack",
+   "Expert Ore Miner",
+   "Expert Silver Miner",
+   "Expert Fisherman",
+   "Master Distiller",
+   "Master Tobacconist",
+   "Master Weaver",
+   "Master Fur Trader",
+   "Master Carpenter",
+   "Master Blacksmith",
+   "Master Gunsmith",
+   "Firebrand Preacher",
+   "Elder Statesman",
+   "Student",
+   "Free Colonist",
+   "Hardy Pioneer",
+   "Veteran Soldier",
+   "Seasoned Scout",
+   "Veteran Dragoon",
+   "Devoted Missionary",
+   "Indentured Servant",
+   "Petty Criminal",
+   "Native Convert",
+   "Free Colonist"
+  ],
+  "rulers": [
+   "the Sovereign of the Sun Road, first of the Ankaru",
+   "the Speaker of the Itzari Council"
+  ],
+  "homeland": "the Old Kingdoms",
+  "far_ocean": "Sunset Sea",
+  "assembly": "Colonial Assembly"
+ },
+ "leaders": [
+  "Lord Admiral Edric Vane",
+  "Captain Amaury Sorel",
+  "Admiral Teodor Ilvares",
+  "Commodore Pieter Haanstra"
+ ],
+ "tribes": [
+  [
+   "Ankaru",
+   3
+  ],
+  [
+   "Itzari",
+   2
+  ],
+  [
+   "Marawe",
+   1
+  ],
+  [
+   "Onaweh",
+   1
+  ],
+  [
+   "Kessani",
+   1
+  ],
+  [
+   "Durrak",
+   0
+  ],
+  [
+   "Shanoka",
+   0
+  ],
+  [
+   "Ilvae",
+   0
+  ]
+ ],
+ "members": [
+  {
+   "name": "Odile Varenne",
+   "kind": 0,
+   "weights": [
+    2,
+    8,
+    6
+   ]
+  },
+  {
+   "name": "Hendrik Gelt",
+   "kind": 0,
+   "weights": [
+    0,
+    5,
+    8
+   ]
+  },
+  {
+   "name": "Ysolde Marrin",
+   "kind": 0,
+   "weights": [
+    9,
+    1,
+    0
+   ]
+  },
+  {
+   "name": "Jorund Halvard",
+   "kind": 0,
+   "weights": [
+    2,
+    4,
+    8
+   ]
+  },
+  {
+   "name": "Anneke Varr",
+   "kind": 0,
+   "weights": [
+    2,
+    6,
+    10
+   ]
+  },
+  {
+   "name": "Ilsa Corran",
+   "kind": 1,
+   "weights": [
+    2,
+    10,
+    10
+   ]
+  },
+  {
+   "name": "Teodric Marl",
+   "kind": 1,
+   "weights": [
+    3,
+    5,
+    7
+   ]
+  },
+  {
+   "name": "Mirelle Danth",
+   "kind": 1,
+   "weights": [
+    5,
+    10,
+    5
+   ]
+  },
+  {
+   "name": "Osric Fenn",
+   "kind": 1,
+   "weights": [
+    10,
+    1,
+    0
+   ]
+  },
+  {
+   "name": "Lorne Ashby",
+   "kind": 1,
+   "weights": [
+    7,
+    5,
+    3
+   ]
+  },
+  {
+   "name": "Corvo Almeyda",
+   "kind": 2,
+   "weights": [
+    6,
+    5,
+    1
+   ]
+  },
+  {
+   "name": "General Arlen Whitmore",
+   "kind": 2,
+   "weights": [
+    0,
+    4,
+    10
+   ]
+  },
+  {
+   "name": "Tam Brisk",
+   "kind": 2,
+   "weights": [
+    10,
+    2,
+    1
+   ]
+  },
+  {
+   "name": "Nell Saltire",
+   "kind": 2,
+   "weights": [
+    4,
+    8,
+    6
+   ]
+  },
+  {
+   "name": "Commodore Edda Strand",
+   "kind": 2,
+   "weights": [
+    0,
+    6,
+    7
+   ]
+  },
+  {
+   "name": "Elias Thorne",
+   "kind": 3,
+   "weights": [
+    4,
+    5,
+    6
+   ]
+  },
+  {
+   "name": "Taniwe of the Marawe",
+   "kind": 3,
+   "weights": [
+    7,
+    5,
+    3
+   ]
+  },
+  {
+   "name": "Ambrose Kell",
+   "kind": 3,
+   "weights": [
+    1,
+    2,
+    8
+   ]
+  },
+  {
+   "name": "Sebastian Vora",
+   "kind": 3,
+   "weights": [
+    0,
+    4,
+    6
+   ]
+  },
+  {
+   "name": "Aldous Fairweather",
+   "kind": 3,
+   "weights": [
+    5,
+    5,
+    5
+   ]
+  },
+  {
+   "name": "Elder Miriam Brook",
+   "kind": 4,
+   "weights": [
+    7,
+    4,
+    1
+   ]
+  },
+  {
+   "name": "Josiah Calloway",
+   "kind": 4,
+   "weights": [
+    8,
+    5,
+    2
+   ]
+  },
+  {
+   "name": "Brother Anselm Roux",
+   "kind": 4,
+   "weights": [
+    6,
+    6,
+    1
+   ]
+  },
+  {
+   "name": "Fray Domingo Sallas",
+   "kind": 4,
+   "weights": [
+    3,
+    8,
+    3
+   ]
+  },
+  {
+   "name": "Fray Iñigo Cendra",
+   "kind": 4,
+   "weights": [
+    0,
+    5,
+    10
+   ]
+  }
+ ],
+ "terrain": [
+  {
+   "name": "Tundra",
+   "movement": 1,
+   "defence": 0,
+   "improve_turns": 4,
+   "yields": [
+    2,
+    0,
+    0,
+    0,
+    0,
+    0,
+    2,
+    0,
+    0
+   ]
+  },
+  {
+   "name": "Desert",
+   "movement": 1,
+   "defence": 0,
+   "improve_turns": 3,
+   "yields": [
+    1,
+    0,
+    0,
+    1,
+    0,
+    0,
+    2,
+    0,
+    0
+   ]
+  },
+  {
+   "name": "Plains",
+   "movement": 1,
+   "defence": 0,
+   "improve_turns": 3,
+   "yields": [
+    4,
+    0,
+    0,
+    2,
+    0,
+    0,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "name": "Prairie",
+   "movement": 1,
+   "defence": 0,
+   "improve_turns": 3,
+   "yields": [
+    2,
+    0,
+    0,
+    3,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "name": "Grassland",
+   "movement": 1,
+   "defence": 0,
+   "improve_turns": 3,
+   "yields": [
+    2,
+    0,
+    3,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "name": "Savannah",
+   "movement": 1,
+   "defence": 0,
+   "improve_turns": 3,
+   "yields": [
+    3,
+    3,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "name": "Marsh",
+   "movement": 2,
+   "defence": 1,
+   "improve_turns": 5,
+   "yields": [
+    2,
+    0,
+    2,
+    0,
+    0,
+    0,
+    2,
+    0,
+    0
+   ]
+  },
+  {
+   "name": "Swamp",
+   "movement": 2,
+   "defence": 1,
+   "improve_turns": 7,
+   "yields": [
+    2,
+    2,
+    0,
+    0,
+    0,
+    0,
+    2,
+    0,
+    0
+   ]
+  },
+  {
+   "name": "Boreal",
+   "movement": 2,
+   "defence": 2,
+   "improve_turns": 4,
+   "yields": [
+    1,
+    0,
+    0,
+    0,
+    3,
+    2,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "name": "Scrub",
+   "movement": 1,
+   "defence": 2,
+   "improve_turns": 4,
+   "yields": [
+    1,
+    0,
+    0,
+    1,
+    2,
+    1,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "name": "Mixed",
+   "movement": 2,
+   "defence": 2,
+   "improve_turns": 4,
+   "yields": [
+    2,
+    0,
+    0,
+    1,
+    3,
+    3,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "name": "Broadleaf",
+   "movement": 2,
+   "defence": 2,
+   "improve_turns": 4,
+   "yields": [
+    1,
+    0,
+    0,
+    1,
+    2,
+    2,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "name": "Conifer",
+   "movement": 2,
+   "defence": 2,
+   "improve_turns": 4,
+   "yields": [
+    1,
+    0,
+    1,
+    0,
+    2,
+    3,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "name": "Tropical",
+   "movement": 2,
+   "defence": 2,
+   "improve_turns": 6,
+   "yields": [
+    2,
+    1,
+    0,
+    0,
+    2,
+    2,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "name": "Wetland",
+   "movement": 3,
+   "defence": 2,
+   "improve_turns": 6,
+   "yields": [
+    1,
+    0,
+    1,
+    0,
+    2,
+    2,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "name": "Rain",
+   "movement": 3,
+   "defence": 3,
+   "improve_turns": 7,
+   "yields": [
+    1,
+    1,
+    0,
+    0,
+    1,
+    2,
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "name": "Arctic",
+   "movement": 2,
+   "defence": 0,
+   "improve_turns": 4,
+   "yields": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "name": "Ocean",
+   "movement": 1,
+   "defence": 0,
+   "improve_turns": 2,
+   "yields": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    3
+   ]
+  },
+  {
+   "name": "Sea Lane",
+   "movement": 1,
+   "defence": 0,
+   "improve_turns": 2,
+   "yields": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    3
+   ]
+  },
+  {
+   "name": "Mountains",
+   "movement": 3,
+   "defence": 6,
+   "improve_turns": 7,
+   "yields": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    4,
+    1,
+    0
+   ]
+  },
+  {
+   "name": "Hills",
+   "movement": 2,
+   "defence": 4,
+   "improve_turns": 4,
+   "yields": [
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    4,
+    0,
+    0
+   ]
+  }
+ ],
+ "buildings": [
+  {
+   "name": "Stockade",
+   "hammers": 64,
+   "tools": 0,
+   "min_pop": 3
+  },
+  {
+   "name": "Fort",
+   "hammers": 120,
+   "tools": 100,
+   "min_pop": 3
+  },
+  {
+   "name": "Fortress",
+   "hammers": 320,
+   "tools": 200,
+   "min_pop": 8
+  },
+  {
+   "name": "Armory",
+   "hammers": 52,
+   "tools": 0,
+   "min_pop": 1
+  },
+  {
+   "name": "Magazine",
+   "hammers": 120,
+   "tools": 50,
+   "min_pop": 8
+  },
+  {
+   "name": "Arsenal",
+   "hammers": 240,
+   "tools": 100,
+   "min_pop": 8
+  },
+  {
+   "name": "Docks",
+   "hammers": 52,
+   "tools": 0,
+   "min_pop": 1
+  },
+  {
+   "name": "Drydock",
+   "hammers": 80,
+   "tools": 50,
+   "min_pop": 4
+  },
+  {
+   "name": "Shipyard",
+   "hammers": 240,
+   "tools": 100,
+   "min_pop": 8
+  },
+  {
+   "name": "Town Hall",
+   "hammers": 64,
+   "tools": 0,
+   "min_pop": 1
+  },
+  {
+   "name": "Town Hall",
+   "hammers": 64,
+   "tools": 50,
+   "min_pop": 4
+  },
+  {
+   "name": "Town Hall",
+   "hammers": 120,
+   "tools": 100,
+   "min_pop": 8
+  },
+  {
+   "name": "Schoolhouse",
+   "hammers": 64,
+   "tools": 0,
+   "min_pop": 4
+  },
+  {
+   "name": "College",
+   "hammers": 160,
+   "tools": 50,
+   "min_pop": 8
+  },
+  {
+   "name": "University",
+   "hammers": 200,
+   "tools": 100,
+   "min_pop": 10
+  },
+  {
+   "name": "Warehouse",
+   "hammers": 80,
+   "tools": 0,
+   "min_pop": 1
+  },
+  {
+   "name": "Warehouse Expansion",
+   "hammers": 80,
+   "tools": 20,
+   "min_pop": 1
+  },
+  {
+   "name": "Stable",
+   "hammers": 64,
+   "tools": 0,
+   "min_pop": 1
+  },
+  {
+   "name": "Custom House",
+   "hammers": 160,
+   "tools": 50,
+   "min_pop": 1
+  },
+  {
+   "name": "Printing Press",
+   "hammers": 52,
+   "tools": 20,
+   "min_pop": 1
+  },
+  {
+   "name": "Newspaper",
+   "hammers": 120,
+   "tools": 50,
+   "min_pop": 4
+  },
+  {
+   "name": "Weaver's House",
+   "hammers": 64,
+   "tools": 0,
+   "min_pop": 1
+  },
+  {
+   "name": "Weaver's Shop",
+   "hammers": 64,
+   "tools": 20,
+   "min_pop": 1
+  },
+  {
+   "name": "Textile Mill",
+   "hammers": 160,
+   "tools": 100,
+   "min_pop": 8
+  },
+  {
+   "name": "Tobacconist's House",
+   "hammers": 64,
+   "tools": 0,
+   "min_pop": 1
+  },
+  {
+   "name": "Tobacconist's Shop",
+   "hammers": 64,
+   "tools": 20,
+   "min_pop": 1
+  },
+  {
+   "name": "Cigar Factory",
+   "hammers": 160,
+   "tools": 100,
+   "min_pop": 8
+  },
+  {
+   "name": "Rum Distiller's House",
+   "hammers": 64,
+   "tools": 0,
+   "min_pop": 1
+  },
+  {
+   "name": "Rum Distillery",
+   "hammers": 64,
+   "tools": 20,
+   "min_pop": 1
+  },
+  {
+   "name": "Rum Factory",
+   "hammers": 160,
+   "tools": 100,
+   "min_pop": 8
+  },
+  {
+   "name": "Capitol",
+   "hammers": 400,
+   "tools": 100,
+   "min_pop": 16
+  },
+  {
+   "name": "Capitol Expansion",
+   "hammers": 400,
+   "tools": 100,
+   "min_pop": 16
+  },
+  {
+   "name": "Fur Trader's House",
+   "hammers": 56,
+   "tools": 0,
+   "min_pop": 1
+  },
+  {
+   "name": "Fur Trading Post",
+   "hammers": 56,
+   "tools": 20,
+   "min_pop": 1
+  },
+  {
+   "name": "Fur Factory",
+   "hammers": 160,
+   "tools": 100,
+   "min_pop": 6
+  },
+  {
+   "name": "Carpenter's Shop",
+   "hammers": 39,
+   "tools": 0,
+   "min_pop": 1
+  },
+  {
+   "name": "Lumber Mill",
+   "hammers": 52,
+   "tools": 0,
+   "min_pop": 3
+  },
+  {
+   "name": "Church",
+   "hammers": 64,
+   "tools": 0,
+   "min_pop": 3
+  },
+  {
+   "name": "Cathedral",
+   "hammers": 176,
+   "tools": 100,
+   "min_pop": 8
+  },
+  {
+   "name": "Blacksmith's House",
+   "hammers": 64,
+   "tools": 0,
+   "min_pop": 1
+  },
+  {
+   "name": "Blacksmith's Shop",
+   "hammers": 64,
+   "tools": 20,
+   "min_pop": 1
+  },
+  {
+   "name": "Iron Works",
+   "hammers": 240,
+   "tools": 100,
+   "min_pop": 8
+  }
+ ],
+ "units": [
+  {
+   "name": "Colonist",
+   "movement": 1,
+   "attack": 0,
+   "combat": 1,
+   "holds": 0,
+   "hammers": 32,
+   "tools": 0
+  },
+  {
+   "name": "Soldier",
+   "movement": 1,
+   "attack": 2,
+   "combat": 2,
+   "holds": 0,
+   "hammers": 64,
+   "tools": 0
+  },
+  {
+   "name": "Pioneer",
+   "movement": 1,
+   "attack": 0,
+   "combat": 1,
+   "holds": 0,
+   "hammers": 64,
+   "tools": 0
+  },
+  {
+   "name": "Missionary",
+   "movement": 2,
+   "attack": 0,
+   "combat": 1,
+   "holds": 0,
+   "hammers": 32,
+   "tools": 0
+  },
+  {
+   "name": "Dragoon",
+   "movement": 4,
+   "attack": 3,
+   "combat": 3,
+   "holds": 0,
+   "hammers": 96,
+   "tools": 0
+  },
+  {
+   "name": "Scout",
+   "movement": 4,
+   "attack": 1,
+   "combat": 1,
+   "holds": 0,
+   "hammers": 64,
+   "tools": 0
+  },
+  {
+   "name": "Crown Regular",
+   "movement": 1,
+   "attack": 5,
+   "combat": 5,
+   "holds": 0,
+   "hammers": 96,
+   "tools": 0
+  },
+  {
+   "name": "Patriot Cavalry",
+   "movement": 4,
+   "attack": 5,
+   "combat": 5,
+   "holds": 0,
+   "hammers": 96,
+   "tools": 0
+  },
+  {
+   "name": "Crown Cavalry",
+   "movement": 4,
+   "attack": 6,
+   "combat": 6,
+   "holds": 0,
+   "hammers": 128,
+   "tools": 0
+  },
+  {
+   "name": "Patriot Army",
+   "movement": 1,
+   "attack": 4,
+   "combat": 4,
+   "holds": 0,
+   "hammers": 96,
+   "tools": 0
+  },
+  {
+   "name": "Treasure",
+   "movement": 1,
+   "attack": 0,
+   "combat": 0,
+   "holds": 0,
+   "hammers": 128,
+   "tools": 0
+  },
+  {
+   "name": "Artillery",
+   "movement": 1,
+   "attack": 7,
+   "combat": 5,
+   "holds": 0,
+   "hammers": 192,
+   "tools": 40
+  },
+  {
+   "name": "Wagon Train",
+   "movement": 2,
+   "attack": 0,
+   "combat": 1,
+   "holds": 2,
+   "hammers": 32,
+   "tools": 0
+  },
+  {
+   "name": "Caravel",
+   "movement": 4,
+   "attack": 0,
+   "combat": 2,
+   "holds": 2,
+   "hammers": 128,
+   "tools": 40
+  },
+  {
+   "name": "Merchantman",
+   "movement": 5,
+   "attack": 0,
+   "combat": 6,
+   "holds": 4,
+   "hammers": 192,
+   "tools": 80
+  },
+  {
+   "name": "Galleon",
+   "movement": 6,
+   "attack": 0,
+   "combat": 10,
+   "holds": 6,
+   "hammers": 320,
+   "tools": 100
+  },
+  {
+   "name": "Privateer",
+   "movement": 8,
+   "attack": 8,
+   "combat": 8,
+   "holds": 2,
+   "hammers": 256,
+   "tools": 120
+  },
+  {
+   "name": "Frigate",
+   "movement": 6,
+   "attack": 16,
+   "combat": 16,
+   "holds": 4,
+   "hammers": 512,
+   "tools": 200
+  },
+  {
+   "name": "Ship of the Line",
+   "movement": 5,
+   "attack": 24,
+   "combat": 24,
+   "holds": 6,
+   "hammers": 1024,
+   "tools": 900
+  },
+  {
+   "name": "Brave",
+   "movement": 1,
+   "attack": 1,
+   "combat": 1,
+   "holds": 0,
+   "hammers": 32,
+   "tools": 0
+  },
+  {
+   "name": "Armed Brave",
+   "movement": 1,
+   "attack": 2,
+   "combat": 2,
+   "holds": 0,
+   "hammers": 64,
+   "tools": 0
+  },
+  {
+   "name": "Mounted Brave",
+   "movement": 4,
+   "attack": 2,
+   "combat": 2,
+   "holds": 0,
+   "hammers": 64,
+   "tools": 0
+  },
+  {
+   "name": "Mounted Warrior",
+   "movement": 4,
+   "attack": 3,
+   "combat": 3,
+   "holds": 0,
+   "hammers": 96,
+   "tools": 0
+  }
+ ],
+ "cargo": [
+  {
+   "name": "Food",
+   "start_lo": 1,
+   "start_hi": 3,
+   "low": 1,
+   "high": 6,
+   "burden": 7,
+   "rise": 3,
+   "fall": 2
+  },
+  {
+   "name": "Sugar",
+   "start_lo": 4,
+   "start_hi": 7,
+   "low": 3,
+   "high": 7,
+   "burden": 1,
+   "rise": 4,
+   "fall": 6
+  },
+  {
+   "name": "Tobacco",
+   "start_lo": 3,
+   "start_hi": 5,
+   "low": 2,
+   "high": 5,
+   "burden": 1,
+   "rise": 4,
+   "fall": 8
+  },
+  {
+   "name": "Cotton",
+   "start_lo": 2,
+   "start_hi": 5,
+   "low": 2,
+   "high": 5,
+   "burden": 1,
+   "rise": 4,
+   "fall": 6
+  },
+  {
+   "name": "Furs",
+   "start_lo": 4,
+   "start_hi": 6,
+   "low": 2,
+   "high": 6,
+   "burden": 1,
+   "rise": 4,
+   "fall": 20
+  },
+  {
+   "name": "Lumber",
+   "start_lo": 2,
+   "start_hi": 2,
+   "low": 2,
+   "high": 2,
+   "burden": 4,
+   "rise": 3,
+   "fall": 2
+  },
+  {
+   "name": "Ore",
+   "start_lo": 3,
+   "start_hi": 6,
+   "low": 2,
+   "high": 6,
+   "burden": 2,
+   "rise": 2,
+   "fall": 4
+  },
+  {
+   "name": "Silver",
+   "start_lo": 20,
+   "start_hi": 20,
+   "low": 2,
+   "high": 20,
+   "burden": 0,
+   "rise": 8,
+   "fall": 1
+  },
+  {
+   "name": "Horses",
+   "start_lo": 2,
+   "start_hi": 3,
+   "low": 2,
+   "high": 11,
+   "burden": 0,
+   "rise": 3,
+   "fall": 2
+  },
+  {
+   "name": "Rum",
+   "start_lo": 11,
+   "start_hi": 13,
+   "low": 1,
+   "high": 20,
+   "burden": 0,
+   "rise": 4,
+   "fall": 4
+  },
+  {
+   "name": "Cigars",
+   "start_lo": 11,
+   "start_hi": 13,
+   "low": 1,
+   "high": 20,
+   "burden": 0,
+   "rise": 4,
+   "fall": 4
+  },
+  {
+   "name": "Cloth",
+   "start_lo": 11,
+   "start_hi": 13,
+   "low": 1,
+   "high": 20,
+   "burden": 0,
+   "rise": 4,
+   "fall": 4
+  },
+  {
+   "name": "Coats",
+   "start_lo": 11,
+   "start_hi": 13,
+   "low": 1,
+   "high": 20,
+   "burden": 0,
+   "rise": 4,
+   "fall": 4
+  },
+  {
+   "name": "Trade Goods",
+   "start_lo": 2,
+   "start_hi": 3,
+   "low": 2,
+   "high": 12,
+   "burden": 0,
+   "rise": 2,
+   "fall": 3
+  },
+  {
+   "name": "Tools",
+   "start_lo": 2,
+   "start_hi": 2,
+   "low": 2,
+   "high": 9,
+   "burden": 0,
+   "rise": 2,
+   "fall": 2
+  },
+  {
+   "name": "Muskets",
+   "start_lo": 3,
+   "start_hi": 3,
+   "low": 2,
+   "high": 20,
+   "burden": 0,
+   "rise": 2,
+   "fall": 2
+  }
+ ],
+ "jobs": [
+  {
+   "name": "Farmer",
+   "expert_name": "Expert Farmers",
+   "skill": 1,
+   "homeland_cost": 1100
+  },
+  {
+   "name": "Sugar Planter",
+   "expert_name": "Master Sugar Planters",
+   "skill": 2,
+   "homeland_cost": null
+  },
+  {
+   "name": "Tobacco Planter",
+   "expert_name": "Master Tobacco Planters",
+   "skill": 2,
+   "homeland_cost": null
+  },
+  {
+   "name": "Cotton Planter",
+   "expert_name": "Master Cotton Planters",
+   "skill": 2,
+   "homeland_cost": null
+  },
+  {
+   "name": "Fur Trapper",
+   "expert_name": "Expert Fur Trappers",
+   "skill": 1,
+   "homeland_cost": null
+  },
+  {
+   "name": "Lumberjack",
+   "expert_name": "Expert Lumberjacks",
+   "skill": 1,
+   "homeland_cost": 700
+  },
+  {
+   "name": "Ore Miner",
+   "expert_name": "Expert Ore Miners",
+   "skill": 1,
+   "homeland_cost": 600
+  },
+  {
+   "name": "Silver Miner",
+   "expert_name": "Expert Silver Miners",
+   "skill": 1,
+   "homeland_cost": 900
+  },
+  {
+   "name": "Fisherman",
+   "expert_name": "Expert Fishermen",
+   "skill": 1,
+   "homeland_cost": 1000
+  },
+  {
+   "name": "Distiller",
+   "expert_name": "Master Distiller",
+   "skill": 2,
+   "homeland_cost": 1100
+  },
+  {
+   "name": "Tobacconist",
+   "expert_name": "Master Tobacconists",
+   "skill": 2,
+   "homeland_cost": 1200
+  },
+  {
+   "name": "Weaver",
+   "expert_name": "Master Weavers",
+   "skill": 2,
+   "homeland_cost": 1300
+  },
+  {
+   "name": "Fur Trader",
+   "expert_name": "Master Fur Traders",
+   "skill": 2,
+   "homeland_cost": 950
+  },
+  {
+   "name": "Carpenter",
+   "expert_name": "Master Carpenters",
+   "skill": 1,
+   "homeland_cost": 1000
+  },
+  {
+   "name": "Blacksmith",
+   "expert_name": "Master Blacksmiths",
+   "skill": 2,
+   "homeland_cost": 1050
+  },
+  {
+   "name": "Gunsmith",
+   "expert_name": "Master Gunsmiths",
+   "skill": 2,
+   "homeland_cost": 850
+  },
+  {
+   "name": "Preacher",
+   "expert_name": "Firebrand Preachers",
+   "skill": 3,
+   "homeland_cost": 1500
+  },
+  {
+   "name": "Statesman",
+   "expert_name": "Elder Statesmen",
+   "skill": 3,
+   "homeland_cost": 1900
+  },
+  {
+   "name": "Teacher",
+   "expert_name": "Expert Teachers",
+   "skill": 4,
+   "homeland_cost": null
+  },
+  {
+   "name": "Colonist",
+   "expert_name": "Free Colonists",
+   "skill": 4,
+   "homeland_cost": null
+  },
+  {
+   "name": "Pioneer",
+   "expert_name": "Hardy Pioneers",
+   "skill": 1,
+   "homeland_cost": 1200
+  },
+  {
+   "name": "Soldier",
+   "expert_name": "Veteran Soldiers",
+   "skill": 2,
+   "homeland_cost": 2000
+  },
+  {
+   "name": "Scout",
+   "expert_name": "Seasoned Scouts",
+   "skill": 1,
+   "homeland_cost": null
+  },
+  {
+   "name": "Dragoon",
+   "expert_name": "Veteran Dragoons",
+   "skill": 2,
+   "homeland_cost": null
+  },
+  {
+   "name": "Missionary",
+   "expert_name": "Devoted Missionaries",
+   "skill": 3,
+   "homeland_cost": 1400
+  },
+  {
+   "name": "Servant",
+   "expert_name": "Indentured Servants",
+   "skill": 4,
+   "homeland_cost": null
+  },
+  {
+   "name": "Criminal",
+   "expert_name": "Petty Criminals",
+   "skill": 4,
+   "homeland_cost": null
+  },
+  {
+   "name": "Convert",
+   "expert_name": "Native Converts",
+   "skill": 4,
+   "homeland_cost": null
+  }
+ ],
+ "resources": [
+  "Depleted Mine",
+  "Oasis",
+  "Wheat",
+  "Prime Cotton",
+  "Prime Tobacco",
+  "Prime Sugar",
+  "Minerals",
+  "Fishery",
+  "Beaver",
+  "Game",
+  "Prime Timber",
+  "Prime Timber",
+  "Silver Deposit",
+  "Ore Deposit"
+ ],
+ "colony_names": {
+  "0": [
+   "Newbrenn Harbor",
+   "Ashford",
+   "Kettlewick",
+   "Fairhaven",
+   "Thornbury",
+   "Wexmouth",
+   "Calder's Rest",
+   "Hollin",
+   "Greystone",
+   "Marrowfield",
+   "Saltcombe",
+   "Brigham",
+   "Eldon",
+   "Penhurst",
+   "Larkspur",
+   "Oakmere",
+   "Rushden",
+   "Hartwell",
+   "Stowe Landing",
+   "Merriton",
+   "Coldbrook",
+   "Whitcombe",
+   "Bramble Point",
+   "Northwatch"
+  ],
+  "1": [
+   "Port Sorelle",
+   "Belcourt",
+   "Sainte-Avrel",
+   "Montclair",
+   "Rivenne",
+   "Lisaire",
+   "Fort Daumier",
+   "Corvaine-Nouvel",
+   "Valrose",
+   "Beaumarais",
+   "Chenard",
+   "Sainte-Odile",
+   "Pointe-Gris",
+   "Lavallon",
+   "Mirecourt",
+   "Aubrac",
+   "Trois-Saules",
+   "Fontreuil",
+   "Bellerive",
+   "Saint-Clement",
+   "Marivaux",
+   "Cap Brule",
+   "Vireux",
+   "Haute-Lisse"
+  ],
+  "2": [
+   "Nueva Castamar",
+   "San Ilvares",
+   "Puerto Alado",
+   "Santa Merced",
+   "Villaseca",
+   "Torreblanca",
+   "San Teodoro",
+   "Ciudad Real del Sur",
+   "Alcaraz",
+   "Valdemora",
+   "Santa Lucena",
+   "Rio Dorado",
+   "Monteverde",
+   "Las Palmas Nuevas",
+   "San Bartolo",
+   "Almendral",
+   "Peñasco",
+   "Santa Ines",
+   "Villarosa",
+   "Puerto Viejo",
+   "Mirasol",
+   "Cabo Fuerte",
+   "San Corvo",
+   "Esperanza"
+  ],
+  "3": [
+   "Westhaven",
+   "Nieuw Haanstra",
+   "Veldburg",
+   "Groenkerk",
+   "Zandvoort Nieuw",
+   "Molendam",
+   "Hoorndijk",
+   "Lindehof",
+   "Kaapstad Nieuw",
+   "Vlietmond",
+   "Oosterhout",
+   "Breeland",
+   "Steenwijk",
+   "Havenrust",
+   "Duinhof",
+   "Waterveld",
+   "Klaverdam",
+   "Ruigeweg",
+   "Zeerust",
+   "Hollestein",
+   "Bakelburg",
+   "Merwedal",
+   "Noordpunt",
+   "Eikendaal"
+  ]
+ }
+}
