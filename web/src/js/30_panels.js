@@ -190,41 +190,50 @@ const Cargo = {
     const st = App.st, m = App.meta;
     const box = h('div', { class: 'cargo' });
     const keep = { quiet: false, keep: true };
-    box.append(h('div', { class: 'cargo-head' }, h('span', { class: 'k' }, `Holds ${u.holds_used}/${u.holds}`),
-      col && (u.cargo.length || st.units.some(x => x.loc.type === 'aboard' && x.loc.ship === u.id)) ? h('button', { class: 'btn small', onclick: () => Cargo.unloadAll(u), title: 'Unload all goods and passengers (U)' }, 'Unload all') : null));
-    const holds = h('div', { class: 'holds' });
+    const load = g => App.act({ cmd: 'load_goods', colony: col.id, carrier: u.id, good: g }, keep);
+    const passengers = st.units.filter(x => x.loc && x.loc.type === 'aboard' && x.loc.ship === u.id);
+    box.append(h('div', { class: 'cargo-head' }, h('span', { class: 'k' }, `Holds ${u.holds_used} of ${u.holds} used`),
+      col && (u.cargo.length || passengers.length) ? h('button', { class: 'btn small', onclick: () => Cargo.unloadAll(u), title: 'Unload all goods and passengers (U)' }, 'Unload all') : null));
+    // the holds: one box each; click a full one to unload it, drop goods on an empty one to load
+    const holds = h('div', { class: 'hold-row', 'data-drop': 'holds' });
     u.cargo.forEach(([g, n], slot) => {
-      const chip = goodChip(g, n);
-      if (col) {
-        const b = h('button', { class: 'chipbtn', title: `Unload ${n} ${m.goods[g]} into ${col.name}`, onclick: () => App.act({ cmd: 'unload', carrier: u.id, slot }, keep) }, chip);
-        holds.append(b);
-      } else holds.append(chip);
+      const label = h('span', { class: 'hold-name' }, m.goods[g]);
+      if (col) holds.append(h('button', { class: 'hold full', title: `Click to unload ${n} ${m.goods[g]} into ${col.name}`, onclick: () => App.act({ cmd: 'unload', carrier: u.id, slot }, keep) }, goodChip(g, n), label));
+      else holds.append(h('span', { class: 'hold full' }, goodChip(g, n), label));
     });
-    for (const p of st.units.filter(x => x.loc && x.loc.type === 'aboard' && x.loc.ship === u.id)) {
-      const t = unitToken(p, 26);
-      if (col) holds.append(h('button', { class: 'chipbtn', title: `${p.name}: put ashore in ${col.name}`, onclick: () => App.act({ cmd: 'step_out', unit: p.id }, keep) }, t));
-      else { t.title = p.name; holds.append(t); }
+    for (const p of passengers) {
+      const t = unitToken(p, 24);
+      const label = h('span', { class: 'hold-name' }, p.name);
+      if (col) holds.append(h('button', { class: 'hold full', title: `Click to put ${p.name} ashore in ${col.name}`, onclick: () => App.act({ cmd: 'step_out', unit: p.id }, keep) }, t, label));
+      else holds.append(h('span', { class: 'hold full' }, t, label));
     }
-    for (let i = u.holds_used; i < u.holds; i++) holds.append(h('span', { class: 'hold empty' }));
+    for (let i = u.holds_used; i < u.holds; i++) holds.append(h('span', { class: 'hold free' }, 'Empty'));
     box.append(holds);
     if (!col) return box;
-    // goods in the warehouse: one click loads up to a full hold
+    // what the colony has to load
     const room = u.holds_used < u.holds;
-    const goods = h('div', { class: 'holds load' });
+    const list = h('div', { class: 'load-list' });
     (col.stock || []).forEach((n, g) => {
       if (n <= 0) return;
       const partial = u.cargo.find(([cg, cn]) => cg === g && cn < 100);
       const can = room || !!partial;
-      goods.append(h('button', { class: 'chipbtn', disabled: !can, title: can ? `Load ${Math.min(100, n)} ${m.goods[g]} (${n} in store)` : 'No room aboard', onclick: () => App.act({ cmd: 'load_goods', colony: col.id, carrier: u.id, good: g }, keep) }, goodChip(g, n)));
+      const amount = Math.min(n, partial ? 100 - partial[1] : 100);
+      const row = h('button', { class: 'load-row', disabled: !can, title: can ? `Load ${amount} ${m.goods[g]} onto the ${u.name}. You can also drag it to a hold.` : 'No room aboard' },
+        goodChip(g), h('span', { class: 'lname' }, m.goods[g]), h('span', { class: 'lstock' }, `${n} in store`),
+        h('span', { class: 'lgo' }, can ? `Load ${amount}` : 'Full'));
+      if (can) row.addEventListener('pointerdown', e => Drag.start(e, { type: 'good', g }, row, { click: () => load(g), drop: (p, t) => { if (t.dataset.drop === 'holds') load(p.g); } }));
+      list.append(row);
     });
-    box.append(h('span', { class: 'k' }, goods.childNodes.length ? `Load from ${col.name}` : `${col.name}'s warehouse is empty`), goods);
+    box.append(h('div', { class: 'cargo-head' }, h('span', { class: 'k' }, list.childNodes.length ? `Load from ${col.name}` : `${col.name}'s warehouse is empty`)));
+    if (list.childNodes.length) box.append(list);
     // people on the colony square can come aboard ships
     if (isShip(u.kind)) {
       const people = st.units.filter(x => x.nation === st.human && x.loc.type === 'map' && x.x === u.x && x.y === u.y && !isCarrier(x.kind));
       if (people.length) {
-        const row = h('div', { class: 'holds' });
-        for (const p of people) row.append(h('button', { class: 'chipbtn', disabled: !room, title: room ? `${p.name}: board the ${u.name}` : 'No room aboard', onclick: () => App.act({ cmd: 'board', unit: p.id, ship: u.id }, keep) }, unitToken(p, 26)));
-        box.append(h('span', { class: 'k' }, 'Take aboard'), row);
+        const plist = h('div', { class: 'load-list' });
+        for (const p of people) plist.append(h('button', { class: 'load-row', disabled: !room, title: room ? `${p.name} boards the ${u.name}` : 'No room aboard', onclick: () => App.act({ cmd: 'board', unit: p.id, ship: u.id }, keep) },
+          unitToken(p, 22), h('span', { class: 'lname' }, p.name), h('span', { class: 'lstock' }), h('span', { class: 'lgo' }, room ? 'Board' : 'Full')));
+        box.append(h('div', { class: 'cargo-head' }, h('span', { class: 'k' }, 'Take aboard')), plist);
       }
     }
     return box;

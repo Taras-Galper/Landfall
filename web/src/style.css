@@ -304,3 +304,19 @@ table.grid td.zero { color: var(--line); }
 .also { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
 .also-unit { display: flex; align-items: center; gap: 8px; background: none; border: 0; border-radius: 6px; padding: 3px 4px; cursor: pointer; text-align: left; font-size: 14px; }
 .also-unit:hover { background: var(--ink-3); }
+
+.hold-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 6px; border-radius: 6px; }
+.hold { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 52px; border-radius: 6px; font-size: 12px; padding: 4px; }
+.hold.free { border: 1px dashed var(--line); color: var(--muted); }
+.hold.full { background: var(--ink-3); border: 1px solid var(--line); }
+button.hold.full { cursor: pointer; }
+button.hold.full:hover { border-color: var(--bad); }
+.hold-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); }
+.hold-row.over { box-shadow: 0 0 0 2px var(--brass-hi); }
+.load-list { display: flex; flex-direction: column; gap: 4px; }
+.load-row { display: grid; grid-template-columns: 24px 1fr auto auto; align-items: center; gap: 8px; text-align: left; background: var(--ink-3); border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; cursor: pointer; font-size: 14px; touch-action: none; }
+.load-row:hover:not(:disabled) { border-color: var(--brass); }
+.load-row:disabled { opacity: .45; cursor: not-allowed; }
+.load-row .lstock { color: var(--muted); font-size: 12px; }
+.load-row .lgo { background: var(--brass); color: #1D1608; font-weight: 600; font-size: 12px; border-radius: 4px; padding: 2px 8px; }
+.load-row:disabled .lgo { background: var(--ink); color: var(--muted); }
