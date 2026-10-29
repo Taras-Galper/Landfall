@@ -265,13 +265,13 @@ impl Game {
 
     // ----- go to ------------------------------------------------------------------
 
-    /// Can this unit pass through (x, y) on the way to (tx, ty)?
     /// Has the human never seen this square? Routes for the human's units
     /// treat such squares as open, since nothing is known about them.
     fn unknown_to(&self, u: &Unit, x: i32, y: i32) -> bool {
         u.nation == self.human && self.tile(x, y).is_some_and(|t| !t.visible_to(u.nation))
     }
 
+    /// Can this unit pass through (x, y) on the way to (tx, ty)?
     fn passable(&self, u: &Unit, x: i32, y: i32, tx: i32, ty: i32) -> bool {
         let Some(t) = self.tile(x, y) else { return false };
         if self.unknown_to(u, x, y) {
@@ -388,7 +388,11 @@ impl Game {
             }
             let pos = self.unit_pos(id)?;
             if !matches!(u.loc, Loc::Map { .. }) || pos == (tx, ty) {
+                let home = u.then_home && matches!(u.loc, Loc::Map { .. });
                 self.stop_goto(id);
+                if home {
+                    self.sail_to_homeland(id);
+                }
                 return None;
             }
             let human = u.nation == self.human;
@@ -426,9 +430,19 @@ impl Game {
                         u.plan.remove(0);
                     }
                     if now == Some(dest) {
+                        let home = self.unit(id).is_some_and(|u| u.then_home);
                         self.stop_goto(id);
+                        if home {
+                            self.sail_to_homeland(id);
+                        }
                         return None;
                     }
+                }
+                MoveResult::Ask(Prompt::SailToHomeland { .. }) if u.then_home => {
+                    // reached the sea lanes on the way home: keep going
+                    self.stop_goto(id);
+                    self.sail_to_homeland(id);
+                    return None;
                 }
                 MoveResult::Blocked(why) if human => {
                     self.stop_goto(id);
@@ -450,6 +464,7 @@ impl Game {
         if let Some(u) = self.unit_mut(id) {
             u.orders = o;
             u.plan.clear();
+            u.then_home = false;
         }
     }
 
@@ -584,6 +599,9 @@ impl Game {
                         let n = self.unit_name(self.unit(*id).unwrap());
                         self.msg(format!("Your {n} has arrived in the New World."));
                     }
+                    if let Some((ax, ay)) = self.unit_mut(*id).and_then(|u| u.arrive_at.take()) {
+                        self.set_orders(*id, Orders::Goto { x: ax, y: ay });
+                    }
                 }
             }
         }
@@ -702,11 +720,17 @@ impl Game {
 
     /// Sell one cargo slot of a ship docked in the homeland.
     pub fn sell_cargo(&mut self, ship: Id, slot: usize) -> Result<i32, String> {
+        self.sell_cargo_part(ship, slot, None)
+    }
+
+    /// Sell some (or, with None, all) of one cargo slot in the homeland.
+    pub fn sell_cargo_part(&mut self, ship: Id, slot: usize, amount: Option<i32>) -> Result<i32, String> {
         let u = self.unit(ship).ok_or("no ship")?;
         if u.loc != Loc::Homeland {
             return Err("The ship is not in port in the homeland.".into());
         }
-        let (good, amount) = *u.cargo.get(slot).ok_or("empty hold")?;
+        let (good, held) = *u.cargo.get(slot).ok_or("empty hold")?;
+        let amount = amount.unwrap_or(held as i32).clamp(1, held as i32) as u8;
         let nation = u.nation;
         if self.boycotted(nation, good as usize) {
             return Err(format!("{} are boycotted. Pay the arrears first.", GOOD_NAMES[good as usize]));
@@ -718,7 +742,12 @@ impl Game {
             self.milestone(crate::events::MS_CARGO);
         }
         self.players[nation as usize].gold += net;
-        self.unit_mut(ship).unwrap().cargo.remove(slot);
+        let um = self.unit_mut(ship).unwrap();
+        if amount >= held {
+            um.cargo.remove(slot);
+        } else {
+            um.cargo[slot].1 -= amount;
+        }
         self.market_traffic(nation, good as usize, amount as i32);
         if self.chance(3) && tax < 70 {
             self.raise_tax(nation, good as usize);
@@ -728,6 +757,11 @@ impl Game {
 
     /// Buy up to 100 of a good into a ship in the homeland.
     pub fn buy_cargo(&mut self, ship: Id, good: usize) -> Result<i32, String> {
+        self.buy_cargo_part(ship, good, None)
+    }
+
+    /// Buy up to `amount` (default: as much as fits in one hold) of a good.
+    pub fn buy_cargo_part(&mut self, ship: Id, good: usize, want: Option<i32>) -> Result<i32, String> {
         let u = self.unit(ship).ok_or("no ship")?;
         if u.loc != Loc::Homeland {
             return Err("The ship is not in port in the homeland.".into());
@@ -749,7 +783,7 @@ impl Game {
         };
         let price = self.ask_price(nation, good);
         let gold = self.players[nation as usize].gold;
-        let amount = room.min(gold / price.max(1));
+        let amount = room.min(gold / price.max(1)).min(want.unwrap_or(100).max(1));
         if amount <= 0 {
             return Err("Not enough gold.".into());
         }

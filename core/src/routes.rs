@@ -183,7 +183,7 @@ impl Game {
         None
     }
 
-    fn nearest_sea_lane(&self, x: i32, y: i32) -> Option<(i32, i32)> {
+    pub(crate) fn nearest_sea_lane(&self, x: i32, y: i32) -> Option<(i32, i32)> {
         let mut best: Option<(i32, (i32, i32))> = None;
         for ty in 0..self.height as i32 {
             for tx in 0..self.width as i32 {

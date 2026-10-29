@@ -139,6 +139,12 @@ pub struct Unit {
     /// the route they were given and stop if it turns out to be blocked).
     #[serde(default)]
     pub plan: Vec<(i16, i16)>,
+    /// Sail on to the homeland when the current journey reaches the sea lanes.
+    #[serde(default)]
+    pub then_home: bool,
+    /// Where to head after arriving in the New World from the homeland.
+    #[serde(default)]
+    pub arrive_at: Option<(i16, i16)>,
 }
 
 /// Building kinds, each with up to 3 levels. Row in the rules' `buildings` for
@@ -715,6 +721,8 @@ impl Game {
             route: None,
             repair: 0,
             plan: Vec::new(),
+            then_home: false,
+            arrive_at: None,
         });
         id
     }

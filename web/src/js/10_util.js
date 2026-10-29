@@ -98,11 +98,61 @@ function iconPath(k) {
   return PATH_CACHE[k] || (PATH_CACHE[k] = new Path2D(ICON[k]));
 }
 
+// Professions: a short code and colour for each, so specialists stand out
+// before there is real art. Experts take the colour of what they produce.
+// Codes follow the profession numbers used by the engine.
+const PROF_INFO = (() => {
+  const G = GOOD_COLORS;
+  const land = (abbr, short, g, what) => ({ abbr, short, color: G[g], hint: `Produces twice as much ${what} when working the land.`, kind: 'land', good: g });
+  const shop = (abbr, short, g, what) => ({ abbr, short, color: G[g], hint: `Makes twice as much ${what} in their building (6 instead of 3).`, kind: 'shop', good: g });
+  return {
+    0: land('Fa', 'Farmer', 0, 'food from farming'),
+    1: land('Su', 'Sugar planter', 1, 'sugar'),
+    2: land('To', 'Tobacco planter', 2, 'tobacco'),
+    3: land('Co', 'Cotton planter', 3, 'cotton'),
+    4: land('Tr', 'Fur trapper', 4, 'furs'),
+    5: land('Lj', 'Lumberjack', 5, 'lumber'),
+    6: land('Om', 'Ore miner', 6, 'ore'),
+    7: land('Sm', 'Silver miner', 7, 'silver'),
+    8: { ...land('Fi', 'Fisherman', 0, 'food'), hint: 'Catches twice as many fish on ocean squares. The colony needs docks.' },
+    9: shop('Di', 'Distiller', 9, 'rum'),
+    10: shop('Tb', 'Tobacconist', 10, 'cigars'),
+    11: shop('We', 'Weaver', 11, 'cloth'),
+    12: shop('Ft', 'Fur trader', 12, 'coats'),
+    13: shop('Ca', 'Carpenter', 16, 'hammers'),
+    14: shop('Bs', 'Blacksmith', 14, 'tools'),
+    15: shop('Gs', 'Gunsmith', 15, 'muskets'),
+    16: shop('Pr', 'Preacher', 18, 'crosses'),
+    17: shop('St', 'Statesman', 17, 'liberty bells'),
+    18: { abbr: 'Le', short: 'Student', color: G[19], hint: 'Learning a trade in the schoolhouse.', kind: 'other' },
+    20: { abbr: 'Pi', short: 'Hardy pioneer', color: G[14], hint: 'Clears forests, plows and builds roads faster. Equip with tools.', kind: 'field' },
+    21: { abbr: 'Ve', short: 'Veteran soldier', color: G[15], hint: 'Fights half again as hard as a soldier or dragoon. Equip with muskets.', kind: 'field' },
+    22: { abbr: 'Sc', short: 'Seasoned scout', color: G[8], hint: 'A better explorer and envoy. Equip with horses.', kind: 'field' },
+    23: { abbr: 'Vd', short: 'Veteran dragoon', color: '#5A6A8A', hint: 'Fights half again as hard as a dragoon.', kind: 'field' },
+    24: { abbr: 'Ms', short: 'Missionary', color: G[18], hint: 'Converts natives faster at a mission.', kind: 'field' },
+    25: { abbr: 'Sv', short: 'Servant', color: '#8D7B68', hint: 'Normal output on the land, but only 2 in buildings. A schoolhouse can teach them.', kind: 'low' },
+    26: { abbr: 'Cr', short: 'Criminal', color: '#7A5555', hint: 'Normal output on the land, but only 1 in buildings. A schoolhouse can teach them.', kind: 'low' },
+    27: { abbr: 'Cv', short: 'Convert', color: '#4E8F86', hint: 'One extra on any land job, but only 1 in buildings.', kind: 'low' },
+  };
+})();
+const FREE_INFO = { abbr: '', short: 'Free colonist', color: '', hint: 'No specialty: normal output on the land, 3 in buildings. Can be taught.', kind: 'free' };
+const profInfo = p => PROF_INFO[p] || FREE_INFO;
+
 function unitToken(u, size = 34) {
   const color = NATION_COLORS[u.nation] || '#999';
-  const el = h('span', { class: 'token' + (isShip(u.kind) ? ' ship' : ''), style: { '--c': color, width: size + 'px', height: size + 'px' }, title: u.name });
+  const info = isColonistKind(u.kind) && u.prof !== undefined ? profInfo(u.prof) : null;
+  const title = info ? `${u.name}. ${info.hint}` : u.name;
+  const el = h('span', { class: 'token' + (isShip(u.kind) ? ' ship' : ''), style: { '--c': color, width: size + 'px', height: size + 'px' }, title });
   el.append(svgIcon(unitIcon(u.kind)));
+  if (info && info.abbr) el.append(h('span', { class: 'pbadge', style: { '--p': info.color } }, info.abbr));
   return el;
+}
+
+// Name tag shown under a colonist where there's room.
+function profTag(u) {
+  if (!isColonistKind(u.kind)) return null;
+  const info = profInfo(u.prof);
+  return h('span', { class: 'ptag' + (info.abbr ? '' : ' plain'), style: info.color ? { '--p': info.color } : {} }, info.short);
 }
 
 const GOOD_ABBR = ['Fd', 'Su', 'To', 'Co', 'Fu', 'Lu', 'Or', 'Si', 'Ho', 'Ru', 'Ci', 'Cl', 'Ct', 'TG', 'Tl', 'Mu', 'Hm', 'Be', 'Cr', 'Te'];

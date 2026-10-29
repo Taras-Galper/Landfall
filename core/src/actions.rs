@@ -398,3 +398,74 @@ impl Game {
         Some(att / (att + def))
     }
 }
+
+impl Game {
+    /// Send a ship to the homeland: it sails to the nearest sea lane it can
+    /// reach and crosses the ocean without asking.
+    pub fn send_home(&mut self, ship: Id) -> Result<String, String> {
+        let u = self.own_unit(ship)?.clone();
+        if !u.kind.is_ship() {
+            return Err("Only ships can cross the ocean.".into());
+        }
+        if self.rebellion.as_ref().is_some_and(|r| r.nation == u.nation) {
+            return Err(format!("{} is closed to the rebels.", self.rules.names.homeland));
+        }
+        let (x, y) = self.unit_pos(ship).ok_or("The ship isn't on the map.")?;
+        let home = self.rules.names.homeland.clone();
+        if self.tile(x, y).is_some_and(|t| t.raw & 0x1F == 26) {
+            if u.moves == 0 {
+                self.set_orders(ship, Orders::Goto { x: x as i16, y: y as i16 });
+                self.unit_mut(ship).unwrap().then_home = true;
+                return Ok(format!("The ship will sail for {home} next turn."));
+            }
+            self.sail_to_homeland(ship);
+            return Ok(format!("The ship sets sail for {home}."));
+        }
+        // the closest sea lane square the ship can actually reach
+        let mut lanes: Vec<(i32, i32, i32)> = Vec::new();
+        for ty in 0..self.height as i32 {
+            for tx in 0..self.width as i32 {
+                if self.tile(tx, ty).is_some_and(|t| t.raw & 0x1F == 26 && t.visible_to(u.nation)) {
+                    lanes.push(((tx - x).abs().max((ty - y).abs()), tx, ty));
+                }
+            }
+        }
+        lanes.sort();
+        let Some(path) = lanes.iter().take(40).find_map(|&(_, tx, ty)| self.find_path(ship, tx, ty)) else {
+            return Err("No known sea lane can be reached from here.".into());
+        };
+        let &(lx, ly) = path.last().unwrap();
+        self.set_orders(ship, Orders::Goto { x: lx as i16, y: ly as i16 });
+        if let Some(um) = self.unit_mut(ship) {
+            um.plan = path.iter().map(|&(a, b)| (a as i16, b as i16)).collect();
+            um.then_home = true;
+        }
+        match self.continue_goto(ship) {
+            Some(crate::world::MoveResult::Blocked(why)) => Err(why),
+            _ => Ok(format!("The ship heads for the sea lanes and on to {home}.")),
+        }
+    }
+
+    /// Leave the homeland for the New World, and on arrival head for a colony.
+    pub fn sail_to_port(&mut self, ship: Id, colony: Option<Id>) -> Result<String, String> {
+        self.own_unit(ship)?;
+        let dest = match colony {
+            Some(cid) => {
+                let c = self.own_colony(cid)?;
+                if !self.is_coastal(c.x as i32, c.y as i32) {
+                    return Err(format!("{} has no harbour.", c.name));
+                }
+                Some((c.x, c.y, c.name.clone()))
+            }
+            None => None,
+        };
+        self.sail_to_new_world(ship)?;
+        if let Some(u) = self.unit_mut(ship) {
+            u.arrive_at = dest.as_ref().map(|d| (d.0, d.1));
+        }
+        Ok(match dest {
+            Some((_, _, name)) => format!("The ship sails for the New World and on to {name}."),
+            None => "The ship sails for the New World.".into(),
+        })
+    }
+}

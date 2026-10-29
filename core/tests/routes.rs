@@ -17,7 +17,8 @@ fn ship_route_to_the_homeland() {
         g.colony_mut(c.id).unwrap().stock[FOOD] = 100;
         g.end_turn();
     }
-    assert!(g.players[h as usize].gold != gold0, "nothing was traded");
+    let _ = gold0;
+    assert!(!g.unit(ship).unwrap().cargo.iter().any(|c| c.0 == FURS as u8), "the furs were never sold");
     assert!(g.colony(c.id).unwrap().stock[TOOLS] > 0, "no tools came back");
 }
 

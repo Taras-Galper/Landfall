@@ -120,13 +120,16 @@ pub fn random_world(seed: u64, world: World) -> Vec<Tile> {
     let islands = world.shape == 0;
     let mut elev = vec![0.0f32; w * h];
     for y in 0..h {
-        let cx = w as f32 * (0.42 + 0.22 * (wobble[y] - 0.5) * 2.0);
+        // the east coast lies roughly 6 to 10 squares inside the sea lanes, so
+        // the first crossing takes two or three turns; the land spreads west from there
         let half = 6.0 + 10.0 * width_n[y];
+        let east = w as f32 - 3.0 - (2.0 + 4.0 * wobble[y]);
+        let cx = east - half;
         for x in 0..w {
             let i = y * w + x;
             let e = if islands {
                 // broken land everywhere, a little thicker towards the middle
-                let mid = 1.0 - ((x as f32 - w as f32 * 0.45).abs() / (w as f32 * 0.5));
+                let mid = 1.0 - ((x as f32 - w as f32 * 0.55).abs() / (w as f32 * 0.5));
                 0.45 * n3[i] + 0.45 * n2[i] + 0.15 * n1[i] + 0.2 * mid
             } else {
                 let bias = 1.0 - ((x as f32 - cx).abs() / half);
@@ -136,7 +139,8 @@ pub fn random_world(seed: u64, world: World) -> Vec<Tile> {
         }
     }
     // pick the sea level that gives the wanted amount of land
-    let inside = |x: usize, y: usize| x >= 3 && x < w - 4 && y >= 1 && y < h - 1;
+    // no land within 5 squares of the eastern sea lanes
+    let inside = |x: usize, y: usize| x >= 3 && x < w - 8 && y >= 1 && y < h - 1;
     let mut heights: Vec<f32> = (0..w * h).filter(|i| inside(i % w, i / w)).map(|i| elev[i]).collect();
     heights.sort_by(|a, b| b.partial_cmp(a).unwrap());
     let share = [0.24, 0.33, 0.43][world.land.min(2) as usize] * if islands { 0.85 } else { 1.0 };
@@ -156,7 +160,7 @@ pub fn random_world(seed: u64, world: World) -> Vec<Tile> {
         let (ix, iy) = (4 + rng.n(w as u32 - 9) as i32, 4 + rng.n(h as u32 - 8) as i32);
         for _ in 0..(2 + rng.n(5)) {
             let (x, y) = (ix + rng.n(5) as i32 - 2, iy + rng.n(5) as i32 - 2);
-            if x >= 3 && x < w as i32 - 4 && y >= 2 && y < h as i32 - 2 {
+            if x >= 3 && x < w as i32 - 8 && y >= 2 && y < h as i32 - 2 {
                 land[y as usize * w + x as usize] = true;
             }
         }
@@ -433,7 +437,14 @@ impl Game {
         ];
         let mut out = Vec::new();
         for (tribe, hx, hy) in homes {
-            let (cx, cy) = ((hx * w) as i32, (hy * h) as i32);
+            // place the homeland across the land on that latitude, west to east
+            let cy = (hy * h) as i32;
+            let row: Vec<i32> = (0..self.width as i32).filter(|&x| self.tile(x, cy).is_some_and(|t| !t.terrain().is_water())).collect();
+            let frac = ((hx - 0.25) / 0.45).clamp(0.0, 1.0);
+            let cx = match (row.first(), row.last()) {
+                (Some(&a), Some(&b)) => a + ((b - a) as f32 * frac) as i32,
+                _ => (hx * w) as i32,
+            };
             let count = 4 + rng.n(5);
             let mut placed = 0;
             for _ in 0..200 {

@@ -196,6 +196,15 @@ const MapView = (() => {
     ctx.fillStyle = u.nation === 2 || u.nation === 12 ? '#2A2216' : '#FFFFFF';
     for (const k of unitIcon(u.kind)) ctx.fill(iconPath(k));
     ctx.restore();
+    // profession badge for specialists
+    const info = isColonistKind(u.kind) && u.prof !== undefined ? profInfo(u.prof) : null;
+    if (info && info.abbr && s >= 30) {
+      const br = Math.max(6, s * 0.13), bx = cx - r * 0.8, by = cy + r * 0.8;
+      ctx.fillStyle = info.color; ctx.strokeStyle = '#17222E'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(bx, by, br, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = 'rgba(20,20,20,.85)'; ctx.font = `700 ${Math.round(br * 1.05)}px Barlow, sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(info.abbr, bx, by + 0.5);
+    }
     if (opts.count > 1 && s > 22) {
       ctx.fillStyle = '#17222E'; ctx.strokeStyle = '#EEE7D6'; ctx.lineWidth = 1;
       const bx = cx + r * 0.85, by = cy - r * 0.85, br = Math.max(6, s * 0.13);

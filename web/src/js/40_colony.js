@@ -184,7 +184,7 @@ const Colony = (() => {
     const people = c.units.filter(u => !isCarrier(u.kind) && u.loc.type === 'map');
     const outside = h('div', { class: 'outside', 'data-drop': 'outside', title: 'Drop a worker here to send them outside' }, h('h3', {}, 'Outside the colony'));
     const ol = h('div', { class: 'tokens' });
-    for (const u of people) ol.append(personEl(u, false));
+    for (const u of people) ol.append(personEl(u, false, undefined, true));
     if (!people.length) ol.append(h('p', { class: 'sub' }, 'Drag a worker here to take them out of the colony.'));
     outside.append(ol);
     const selU = sel && (people.find(u => u.id === sel));
@@ -204,8 +204,9 @@ const Colony = (() => {
       s.cargo.forEach(([g, n], slot) => {
         const chip = goodChip(g, n);
         chip.classList.add('cargo-chip');
-        chip.title = `${m.goods[g]}: click to unload all, drag to the warehouse`;
+        chip.title = `${m.goods[g]}: click to unload all, right-click to choose how many, or drag to the warehouse`;
         chip.addEventListener('pointerdown', e => Drag.start(e, { type: 'cargo', carrier: s.id, slot }, chip, handlers));
+        chip.addEventListener('contextmenu', e => { e.preventDefault(); Amount.pick({ anchor: chip, title: `Unload ${m.goods[g]}`, max: n, value: n, verb: 'Unload', onOk: k => act({ cmd: 'unload', carrier: s.id, slot, amount: k }) }); });
         holds.append(chip);
       });
       for (const p of st.units.filter(x => x.loc && x.loc.type === 'aboard' && x.loc.ship === s.id)) holds.append(personEl(p, false));
@@ -221,22 +222,67 @@ const Colony = (() => {
     const goods = h('div', { class: 'wgoods' });
     for (let g = 0; g < 16; g++) {
       const n = c.stock[g];
-      const cell = h('div', { class: 'wgood' + (n ? '' : ' empty') + (n > c.capacity && g ? ' over' : ''), title: `${m.goods[g]}: ${n}` + (g ? ` of ${c.capacity}` : '') + (n ? '. Drag onto a ship or wagon to load.' : '') },
+      const cell = h('div', { class: 'wgood' + (n ? '' : ' empty') + (n > c.capacity && g ? ' over' : ''), title: `${m.goods[g]}: ${n}` + (g ? ` of ${c.capacity}` : '') + (n ? '. Drag onto a ship or wagon to load; right-click to choose how many.' : '') },
         goodChip(g), h('b', {}, n), h('span', { class: 'meter' }, h('i', { style: { width: Math.min(100, 100 * n / c.capacity) + '%' } })));
-      if (n > 0) cell.addEventListener('pointerdown', e => Drag.start(e, { type: 'good', g }, cell, handlers));
+      if (n > 0) {
+        cell.addEventListener('pointerdown', e => Drag.start(e, { type: 'good', g }, cell, handlers));
+        cell.addEventListener('contextmenu', e => {
+          e.preventDefault();
+          const all = view.units.filter(u => isCarrier(u.kind));
+          const target = all.find(u => u.id === sel) || (all.length === 1 ? all[0] : null);
+          if (!target) { status = all.length ? 'Select a ship or wagon first.' : 'No ship or wagon train here to load.'; render(); return; }
+          const part = target.cargo.find(([cg, cn]) => cg === g && cn < 100);
+          const room = part ? 100 - part[1] : target.holds_used < target.holds ? 100 : 0;
+          if (!room) { status = 'No room aboard.'; render(); return; }
+          Amount.pick({ anchor: cell, title: `Load ${m.goods[g]} onto the ${target.name}`, max: Math.min(n, room), verb: 'Load', onOk: k => act({ cmd: 'load_goods', colony: cid, carrier: target.id, good: g, amount: k }) });
+        });
+      }
       goods.append(cell);
     }
     wh.append(goods);
 
+    const legend = h('button', { class: 'btn ghost small', onclick: () => Dialogs.professions(), title: 'What the colours and codes on colonists mean' }, 'Professions');
+    head.insertBefore(legend, head.querySelector('.spacer'));
+    const selected = sel !== null && (c.workers.concat(c.units).find(u => u.id === sel));
+    if (selected && isColonistKind(selected.kind)) {
+      const info = profInfo(selected.prof);
+      head.insertBefore(h('span', { class: 'chip prof', style: info.color ? { '--p': info.color } : {} }, `${selected.name}: ${info.hint}`), head.querySelector('.spacer'));
+    }
     sheet.append(head, h('div', { class: 'colony-body' }, land, bl, prod, yard, wh));
+    if (selected) markSpecialty(selected.prof);
   }
 
-  function personEl(u, inside, output) {
-    const el = h('span', { class: 'person' + (sel === u.id ? ' sel' : ''), title: u.name + (inside ? '. Drag to another job, or outside.' : '. Drag onto a square or building to put them to work.') }, unitToken({ ...u, nation: App.st.human }, 36));
+  function personEl(u, inside, output, tag) {
+    const info = profInfo(u.prof);
+    const tip = `${u.name}. ${info.hint} ${inside ? 'Drag to another job, or outside.' : 'Drag onto a square or building to put them to work.'}`;
+    const tok = unitToken({ ...u, nation: App.st.human }, 36);
+    tok.title = tip;
+    const el = h('span', { class: 'person' + (sel === u.id ? ' sel' : ''), title: tip }, tok);
     if (output !== undefined) el.append(h('small', {}, output));
-    el.addEventListener('pointerdown', e => { e.stopPropagation(); Drag.start(e, { type: 'unit', id: u.id }, el, handlers); });
+    if (tag) el.append(profTag(u));
+    el.addEventListener('pointerdown', e => {
+      e.stopPropagation();
+      markSpecialty(u.prof);
+      Drag.start(e, { type: 'unit', id: u.id }, el, { ...handlers, drop: (p, t) => { markSpecialty(null); handlers.drop(p, t); }, click: (p, ev) => { markSpecialty(null); handlers.click(p, ev); } });
+    });
     return el;
   }
+
+  // light up where a specialist does their best work
+  function markSpecialty(prof) {
+    $$('.specialty').forEach(e => e.classList.remove('specialty'));
+    if (prof === null || prof === undefined || !view) return;
+    const info = profInfo(prof);
+    if (info.kind === 'land') {
+      const free = view.squares.filter(sq => !sq.taken && !sq.village && sq.yields[prof] > 0 && !view.workers.some(w => w.job.dir === sq.dir));
+      const best = Math.max(0, ...free.map(sq => sq.yields[prof]));
+      free.filter(sq => sq.yields[prof] === best).forEach(sq => { const c = $(`.sq[data-dir="${sq.dir}"]`); if (c) c.classList.add('specialty'); });
+    } else if (info.kind === 'shop') {
+      const c = $(`.bcard[data-job="${prof}"]`);
+      if (c) c.classList.add('specialty');
+    }
+  }
+  window.addEventListener('pointerup', () => setTimeout(() => { if (!Drag.active() && cid !== null) markSpecialty(sel && view ? (view.workers.concat(view.units).find(u => u.id === sel) || {}).prof : null); }, 0));
 
   function clickSquare(dir) {
     const w = view.workers.find(w => w.job.dir === dir);

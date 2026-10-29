@@ -65,6 +65,12 @@ const Side = {
     card.append(h('div', { class: 'pips', title: 'Moves left this turn' }, h('span', {}, 'Moves'),
       h('b', {}, `${Number.isInteger(mv) ? mv : mv.toFixed(1)} / ${max}`),
       u.orders !== 'none' ? h('span', { class: 'tag' }, ({ sentry: 'On sentry', fortify: 'Fortified', plow: 'Plowing', road: 'Building road', goto: 'Travelling', route: 'On trade route' })[u.orders] || u.orders) : null));
+    if (isColonistKind(u.kind)) {
+      const info = profInfo(u.prof);
+      card.append(h('p', { class: 'specialty-line' }, info.abbr ? h('span', { class: 'pbadge inline', style: { '--p': info.color } }, info.abbr) : null, ' ', info.hint));
+    }
+    if (u.then_home) card.append(h('p', { class: 'trip' }, `Bound for ${m.homeland}`));
+    else if (u.orders === 'goto' && u.goto) { const dc = App.colonyAt(u.goto[0], u.goto[1]); card.append(h('p', { class: 'trip' }, dc ? `Bound for ${dc.name}` : 'On a journey')); }
     if (u.tools) card.append(h('p', { class: 'sub' }, `Carries ${u.tools} tools`));
     if (u.treasure) card.append(h('p', { class: 'sub' }, `Treasure worth ${u.treasure.toLocaleString()} gold`));
     if (isCarrier(u.kind)) {
@@ -92,7 +98,7 @@ const Side = {
         if (!t.road) acts.append(B('Road', 'R', () => App.act({ cmd: 'improve', unit: u.id, what: 'road' }), 'Uses 20 tools'));
       }
       if (col && col.nation === st.human) acts.append(B('Open colony', 'C', () => Colony.open(col.id, u.id)));
-      if (isShip(u.kind) && t && t.lane && !st.rebellion) acts.append(B(`Sail to ${m.homeland.replace(/^the /, '')}`, 'E', () => App.act({ cmd: 'sail_home', unit: u.id }), '', true));
+      if (isShip(u.kind)) acts.append(B('Send to…', 'G', () => Dialogs.sendTo(u), 'Send the ship to the homeland or one of your ports', !col));
       if (isCarrier(u.kind)) acts.append(B('Trade route', 'T', () => Dialogs.route(u)));
       if (!isCarrier(u.kind) || isShip(u.kind)) acts.append(B('Fortify', 'F', () => App.act({ cmd: 'orders', unit: u.id, orders: 'fortify' }, { next: true })));
       acts.append(B('Sentry', 'S', () => App.act({ cmd: 'orders', unit: u.id, orders: 'sentry' }, { next: true })));
@@ -190,16 +196,25 @@ const Cargo = {
     const st = App.st, m = App.meta;
     const box = h('div', { class: 'cargo' });
     const keep = { quiet: false, keep: true };
-    const load = g => App.act({ cmd: 'load_goods', colony: col.id, carrier: u.id, good: g }, keep);
+    const load = (g, amount) => App.act({ cmd: 'load_goods', colony: col.id, carrier: u.id, good: g, amount }, keep);
+    const unload = (slot, amount) => App.act({ cmd: 'unload', carrier: u.id, slot, amount }, keep);
     const passengers = st.units.filter(x => x.loc && x.loc.type === 'aboard' && x.loc.ship === u.id);
     box.append(h('div', { class: 'cargo-head' }, h('span', { class: 'k' }, `Holds ${u.holds_used} of ${u.holds} used`),
       col && (u.cargo.length || passengers.length) ? h('button', { class: 'btn small', onclick: () => Cargo.unloadAll(u), title: 'Unload all goods and passengers (U)' }, 'Unload all') : null));
-    // the holds: one box each; click a full one to unload it, drop goods on an empty one to load
+    // the holds: one box each; click a full one to unload it, drop goods on the row to load
     const holds = h('div', { class: 'hold-row', 'data-drop': 'holds' });
     u.cargo.forEach(([g, n], slot) => {
       const label = h('span', { class: 'hold-name' }, m.goods[g]);
-      if (col) holds.append(h('button', { class: 'hold full', title: `Click to unload ${n} ${m.goods[g]} into ${col.name}`, onclick: () => App.act({ cmd: 'unload', carrier: u.id, slot }, keep) }, goodChip(g, n), label));
-      else holds.append(h('span', { class: 'hold full' }, goodChip(g, n), label));
+      if (!col) { holds.append(h('span', { class: 'hold full' }, goodChip(g, n), label)); return; }
+      const pickAmount = el => Amount.pick({ anchor: el, title: `Unload ${m.goods[g]} into ${col.name}`, max: n, value: n, verb: 'Unload', onOk: k => unload(slot, k) });
+      const cell = h('div', { class: 'hold full click', role: 'button', tabindex: 0, title: `Click to unload all ${n} ${m.goods[g]} into ${col.name}. Right-click or "Some" to choose how many.` }, goodChip(g, n), label);
+      const some = h('button', { class: 'some', title: 'Choose how many to unload' }, 'Some');
+      some.addEventListener('click', e => { e.stopPropagation(); pickAmount(cell); });
+      cell.append(some);
+      cell.addEventListener('click', () => unload(slot));
+      cell.addEventListener('keydown', e => { if (e.key === 'Enter') unload(slot); });
+      cell.addEventListener('contextmenu', e => { e.preventDefault(); pickAmount(cell); });
+      holds.append(cell);
     });
     for (const p of passengers) {
       const t = unitToken(p, 24);
@@ -218,11 +233,16 @@ const Cargo = {
       const partial = u.cargo.find(([cg, cn]) => cg === g && cn < 100);
       const can = room || !!partial;
       const amount = Math.min(n, partial ? 100 - partial[1] : 100);
-      const row = h('button', { class: 'load-row', disabled: !can, title: can ? `Load ${amount} ${m.goods[g]} onto the ${u.name}. You can also drag it to a hold.` : 'No room aboard' },
+      const row = h('button', { class: 'load-row', disabled: !can, title: can ? `Load ${amount} ${m.goods[g]} onto the ${u.name}. Right-click or "Some" to choose how many, or drag it onto the holds.` : 'No room aboard' },
         goodChip(g), h('span', { class: 'lname' }, m.goods[g]), h('span', { class: 'lstock' }, `${n} in store`),
         h('span', { class: 'lgo' }, can ? `Load ${amount}` : 'Full'));
-      if (can) row.addEventListener('pointerdown', e => Drag.start(e, { type: 'good', g }, row, { click: () => load(g), drop: (p, t) => { if (t.dataset.drop === 'holds') load(p.g); } }));
-      list.append(row);
+      const pickAmount = () => Amount.pick({ anchor: row, title: `Load ${m.goods[g]} from ${col.name}`, max: amount, value: amount, verb: 'Load', onOk: k => load(g, k) });
+      if (can) {
+        row.addEventListener('pointerdown', e => Drag.start(e, { type: 'good', g }, row, { click: () => load(g), drop: (p, t) => { if (t.dataset.drop === 'holds') load(p.g); } }));
+        row.addEventListener('contextmenu', e => { e.preventDefault(); pickAmount(); });
+      }
+      const some = h('button', { class: 'some', disabled: !can, title: 'Choose how many to load', onclick: pickAmount }, 'Some');
+      list.append(h('div', { class: 'load-item' }, row, some));
     });
     box.append(h('div', { class: 'cargo-head' }, h('span', { class: 'k' }, list.childNodes.length ? `Load from ${col.name}` : `${col.name}'s warehouse is empty`)));
     if (list.childNodes.length) box.append(list);

@@ -191,6 +191,36 @@ const Dialogs = (() => {
         u.route ? { label: 'Clear route', fn: () => App.act({ cmd: 'set_route', unit: u.id, clear: true }) } : null, { label: 'Cancel', cancel: true }].filter(Boolean) });
   }
 
+  // where a ship can be sent: the homeland, or any coastal colony of ours
+  function sendTo(u) {
+    const st = App.st, m = App.meta;
+    const turns = (x, y) => {
+      const r = Engine.call({ cmd: 'path', unit: u.id, x, y });
+      const p = r.data && r.data.path;
+      return p && p.length ? p[p.length - 1][2] + 1 : null;
+    };
+    const opts = [];
+    if (!st.rebellion) opts.push({ label: `${m.homeland.replace(/^the /, 'The ')}: sail to the sea lanes and cross`, primary: true,
+      fn: () => App.act({ cmd: 'send_home', unit: u.id }, { keep: true }) });
+    for (const c of st.colonies.filter(c => c.nation === st.human && c.coastal && !(c.x === u.x && c.y === u.y))) {
+      const t = turns(c.x, c.y);
+      opts.push({ label: `${c.name}${t ? `: ${plural(t, 'turn')}` : ': no known route'}`, disabled: !t,
+        fn: () => App.act({ cmd: 'goto', unit: u.id, x: c.x, y: c.y }, { keep: true }) });
+    }
+    opts.push({ label: 'Cancel', cancel: true });
+    show({ title: `Send the ${u.name} to…`, body: ['The ship sails on its own and stops if it meets land it cannot cross.'], options: opts, stack: true });
+  }
+
+  // what the profession colours and codes mean
+  function professions() {
+    const rows = Object.entries(PROF_INFO).map(([p, i]) => h('tr', {},
+      h('td', {}, h('span', { class: 'pbadge inline', style: { '--p': i.color } }, i.abbr)),
+      h('td', {}, h('b', {}, App.meta.professions[p] || i.short)), h('td', { class: 'sub' }, i.hint)));
+    rows.push(h('tr', {}, h('td', {}), h('td', {}, h('b', {}, 'Free Colonist')), h('td', { class: 'sub' }, FREE_INFO.hint)));
+    show({ title: 'Professions', cls: 'wide', body: [h('p', {}, 'Specialists carry a coloured badge with a short code. Land experts double what a square yields; craftsmen make 6 instead of 3 in their building. When you pick up a colonist in a colony, the squares or building where they work best light up.'),
+      h('table', { class: 'keys profs' }, rows)] });
+  }
+
   // --- menu and saves
   function menu() {
     show({ title: 'Menu', stack: true, options: [
@@ -199,6 +229,7 @@ const Dialogs = (() => {
       { label: 'Foreign affairs', fn: diplomacy },
       { label: App.prefs.grid ? 'Hide map grid' : 'Show map grid', fn: () => { App.prefs.grid = !App.prefs.grid; App.savePrefs(); MapView.invalidate(); } },
       { label: 'Keys and controls', fn: help },
+      { label: 'Professions', fn: professions },
       { label: 'New game', fn: () => confirm('Start a new game?', 'Unsaved progress since the last autosave will be lost.', 'New game', () => Start.show()) },
       { label: 'Close', cancel: true },
     ] });
@@ -227,12 +258,12 @@ const Dialogs = (() => {
   }
   function help() {
     const rows = [['Click a unit', 'Select it (click again to cycle a stack)'], ['Click a square', 'Send the selected unit there'], ['Click your colony', 'Select a ship or wagon there to load it; click again to open the colony'], ['Arrows, numpad', 'Move one square'], ['Esc', 'Deselect, or open the menu'], ['Drag, wheel', 'Pan and zoom the map'], ['Tab', 'Next unit'], ['Space', 'Skip this unit'],
-      ['B', 'Found or join a colony'], ['P / R', 'Plow / build a road'], ['F / S', 'Fortify / sentry'], ['T', 'Trade route'], ['U', 'Unload a ship or wagon in a colony'], ['E', 'Sail to the homeland'], ['C', 'Open colony'], ['H', 'Homeland'],
+      ['B', 'Found or join a colony'], ['P / R', 'Plow / build a road'], ['F / S', 'Fortify / sentry'], ['T', 'Trade route'], ['U', 'Unload a ship or wagon in a colony'], ['G / E', 'Send a ship somewhere / home'], ['Right-click a good', 'Choose how many to load, unload, buy or sell'], ['C', 'Open colony'], ['H', 'Homeland'],
       ['Ctrl+Z', 'Undo the last move'], ['F2', 'Reports'], ['Enter', 'End turn'], ['+ / −', 'Zoom']];
     show({ title: 'Keys and controls', cls: 'wide', body: [h('table', { class: 'keys' }, rows.map(([k, d]) => h('tr', {}, h('td', {}, h('kbd', {}, k)), h('td', {}, d))))] });
   }
 
-  return { show, prompt, event, assembly, confirm, ask, equip, route, menu, help, open, cancel, saveMenu, loadMenu };
+  return { show, prompt, event, sendTo, professions, assembly, confirm, ask, equip, route, menu, help, open, cancel, saveMenu, loadMenu };
 })();
 
 // Advisor reports.

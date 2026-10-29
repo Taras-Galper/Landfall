@@ -1001,7 +1001,7 @@
   },
   {
    "name": "Missionary",
-   "movement": 2,
+   "movement": 1,
    "attack": 0,
    "combat": 1,
    "holds": 0,
@@ -1010,7 +1010,7 @@
   },
   {
    "name": "Dragoon",
-   "movement": 4,
+   "movement": 2,
    "attack": 3,
    "combat": 3,
    "holds": 0,
@@ -1019,7 +1019,7 @@
   },
   {
    "name": "Scout",
-   "movement": 4,
+   "movement": 2,
    "attack": 1,
    "combat": 1,
    "holds": 0,
@@ -1037,7 +1037,7 @@
   },
   {
    "name": "Patriot Cavalry",
-   "movement": 4,
+   "movement": 2,
    "attack": 5,
    "combat": 5,
    "holds": 0,
@@ -1046,7 +1046,7 @@
   },
   {
    "name": "Crown Cavalry",
-   "movement": 4,
+   "movement": 2,
    "attack": 6,
    "combat": 6,
    "holds": 0,
@@ -1082,7 +1082,7 @@
   },
   {
    "name": "Wagon Train",
-   "movement": 2,
+   "movement": 1,
    "attack": 0,
    "combat": 1,
    "holds": 2,
@@ -1091,7 +1091,7 @@
   },
   {
    "name": "Caravel",
-   "movement": 4,
+   "movement": 3,
    "attack": 0,
    "combat": 2,
    "holds": 2,
@@ -1100,7 +1100,7 @@
   },
   {
    "name": "Merchantman",
-   "movement": 5,
+   "movement": 3,
    "attack": 0,
    "combat": 6,
    "holds": 4,
@@ -1109,7 +1109,7 @@
   },
   {
    "name": "Galleon",
-   "movement": 6,
+   "movement": 3,
    "attack": 0,
    "combat": 10,
    "holds": 6,
@@ -1118,7 +1118,7 @@
   },
   {
    "name": "Privateer",
-   "movement": 8,
+   "movement": 3,
    "attack": 8,
    "combat": 8,
    "holds": 2,
@@ -1127,7 +1127,7 @@
   },
   {
    "name": "Frigate",
-   "movement": 6,
+   "movement": 3,
    "attack": 16,
    "combat": 16,
    "holds": 4,
@@ -1136,7 +1136,7 @@
   },
   {
    "name": "Ship of the Line",
-   "movement": 5,
+   "movement": 3,
    "attack": 24,
    "combat": 24,
    "holds": 6,
@@ -1163,7 +1163,7 @@
   },
   {
    "name": "Mounted Brave",
-   "movement": 4,
+   "movement": 2,
    "attack": 2,
    "combat": 2,
    "holds": 0,
@@ -1172,7 +1172,7 @@
   },
   {
    "name": "Mounted Warrior",
-   "movement": 4,
+   "movement": 2,
    "attack": 3,
    "combat": 3,
    "holds": 0,

@@ -467,15 +467,17 @@ fn command(g: &mut Game, name: &str, cmd: &Value) -> Reply {
         "buy" => {
             let ship = id(cmd, "ship");
             let gd = cmd["good"].as_u64().unwrap_or(99) as usize;
-            let r = g.buy_cargo(ship, gd).map(|n| format!("Bought {n} {} at {} each.", GOOD_NAMES[gd.min(15)], g.ask_price(h, gd.min(15))));
+            let amount = cmd["amount"].as_i64().map(|a| a as i32);
+            let r = g.buy_cargo_part(ship, gd, amount).map(|n| format!("Bought {n} {} at {} each.", GOOD_NAMES[gd.min(15)], g.ask_price(h, gd.min(15))));
             Reply::from(r)
         }
         "sell" => {
             let ship = id(cmd, "ship");
             let slot = cmd["slot"].as_u64().unwrap_or(99) as usize;
             let what = g.unit(ship).and_then(|u| u.cargo.get(slot).copied());
-            let r = g.sell_cargo(ship, slot).map(|gold| match what {
-                Some((gd, n)) => format!("Sold {n} {} for {gold} gold after tax.", GOOD_NAMES[gd as usize]),
+            let amount = cmd["amount"].as_i64().map(|a| a as i32);
+            let r = g.sell_cargo_part(ship, slot, amount).map(|gold| match what {
+                Some((gd, n)) => format!("Sold {} {} for {gold} gold after tax.", amount.unwrap_or(n as i32).clamp(1, n as i32), GOOD_NAMES[gd as usize]),
                 None => String::new(),
             });
             Reply::from(r)
@@ -499,7 +501,11 @@ fn command(g: &mut Game, name: &str, cmd: &Value) -> Reply {
             Reply::from(r)
         }
         "disembark" => Reply::from(g.disembark_in_homeland(id(cmd, "unit"))),
-        "sail_new_world" => Reply::from(g.sail_to_new_world(id(cmd, "ship")).map(|_| "The ship sails for the New World.".into())),
+        "sail_new_world" => {
+            let colony = cmd["colony"].as_u64().map(|c| c as Id);
+            Reply::from(g.sail_to_port(id(cmd, "ship"), colony))
+        }
+        "send_home" => Reply::from(g.send_home(id(cmd, "unit"))),
 
         // ---- answers to events
         "tax" => {
@@ -705,6 +711,10 @@ fn unit_json(g: &Game, u: &Unit, mine: bool) -> Value {
         }
         if let Some(r) = &u.route {
             v["route"] = json!(g.route_summary(r));
+        }
+        v["then_home"] = json!(u.then_home);
+        if let Some((x, y)) = u.arrive_at {
+            v["arrive_at"] = json!(g.colony_at(x as i32, y as i32).map(|c| c.name.clone()));
         }
     } else {
         v["fortified"] = json!(matches!(u.orders, Orders::Fortified | Orders::Fortify));

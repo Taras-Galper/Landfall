@@ -1,5 +1,5 @@
 // The application: state, commands, selection, keyboard, saving.
-const UNDOABLE = new Set(['move', 'goto', 'orders', 'skip', 'improve', 'assign', 'step_out', 'board', 'load', 'unload', 'build', 'join', 'equip', 'disembark', 'rename', 'set_route']);
+const UNDOABLE = new Set(['move', 'goto', 'orders', 'skip', 'improve', 'assign', 'step_out', 'board', 'load_goods', 'unload', 'build', 'join', 'equip', 'disembark', 'rename', 'set_route']);
 
 const App = {
   st: null, meta: null, sel: null, screen: 'start',
@@ -277,7 +277,8 @@ function onKey(e) {
     case 'r': if (u) App.act({ cmd: 'improve', unit: u.id, what: 'road' }); break;
     case 't': if (u && isCarrier(u.kind)) Dialogs.route(u); break;
     case 'u': if (u && isCarrier(u.kind)) Cargo.unloadAll(u); break;
-    case 'e': if (u && isShip(u.kind)) App.act({ cmd: 'sail_home', unit: u.id }); break;
+    case 'e': if (u && isShip(u.kind)) App.act({ cmd: 'send_home', unit: u.id }, { keep: true }); break;
+    case 'g': if (u && isShip(u.kind)) Dialogs.sendTo(u); break;
     case 'h': Homeland.open(); break;
     case 'c': {
       const mine = App.st.colonies.filter(c => c.nation === App.st.human);
